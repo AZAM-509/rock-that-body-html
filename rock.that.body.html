@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ROCK THAT BODY</title>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            flex-direction: column;
+            transition: background-color 0.5s ease; 
+        }
+        #countdownNumber {
+            font-size: 100px;
+            font-weight: bold;
+        }
+        #myText {
+            font-size: 80px;
+            cursor: pointer;
+            text-align: center;
+            transition: color 0.5s ease; 
+        }
+
+        .male-style {
+            background-color: #0000FF; 
+        }
+        .male-style #myText, .male-style #countdownNumber {
+            color: #FF1493; 
+        }
+
+        
+        .female-style {
+            background-color: #FF1493; 
+        }
+        .female-style #myText, .female-style #countdownNumber {
+            color: #0000FF; 
+        }
+    </style>
+</head>
+<body class="male-style">
+    <p id="myText">Start</p>
+    <h1 id="countdownNumber"></h1>
+    
+    <audio id="myAudio" src="https://github.com/AZAM-509/r/raw/refs/heads/main/RPReplay_Final1755710951.mp3" preload="auto"></audio>
+
+    <script>
+        const audio = document.getElementById('myAudio');
+        const myText = document.getElementById('myText');
+        const countdownNumber = document.getElementById('countdownNumber');
+        
+        countdownNumber.style.display = 'none';
+
+        const script = [
+            { text: "I wannt da-", time: 2000, speaker: "male" },
+            { text: "I wannt dance in the lights", time: 4000, speaker: "male" },
+            { text: "I wannt ro-", time: 6000, speaker: "male" },
+            { text: "I wannt rock your body", time: 8500, speaker: "male" },
+            { text: "I wannt go", time: 10000, speaker: "male" },
+            { text: "I wannt go for a ride", time: 12000, speaker: "male" },
+            { text: "Hop in the music and", time: 14000, speaker: "male" },
+            { text: "Rock your body", time: 16000, speaker: "male" },
+            { text: "Rock that body", time: 17000, speaker: "female" },
+            { text: "Come on, Come on", time: 18000, speaker: "female" },
+            { text: "Rock that body", time: 19000, speaker: "female" },
+            { text: "(Rock your body)", time: 20500, speaker: "male" },
+            { text: "Rock that body", time: 21500, speaker: "female" },
+            { text: "Come on, Come on", time: 22500, speaker: "female" },
+            { text: "Rock that body", time: 24000, speaker: "female" },
+            { text: "Rock that body", time: 25000, speaker: "female" },
+            { text: "Come on, Come on", time: 26000, speaker: "female" },
+            { text: "Rock that body", time: 27000, speaker: "female" },
+            { text: "(Rock that body)", time: 28000, speaker: "male" },
+            { text: "Rock that body", time: 29000, speaker: "female" },
+            { text: "Come on, Come on", time: 30000, speaker: "female" },
+            { text: "Rock that body", time: 31000, speaker: "female" }
+        ];
+
+        let scriptIndex = 0;
+        let typingInterval = null;
+        let timeoutId = null;
+
+        function updateStyles(speaker) {
+            if (speaker === "male") {
+                document.body.classList.remove('female-style');
+                document.body.classList.add('male-style');
+            } else if (speaker === "female") {
+                document.body.classList.remove('male-style');
+                document.body.classList.add('female-style');
+            }
+        }
+        
+        function typeWriterEffect(fullText, speaker) {
+            let i = 0;
+            myText.textContent = '';
+            
+            updateStyles(speaker);
+            
+            if (typingInterval) {
+                clearInterval(typingInterval);
+            }
+            
+            typingInterval = setInterval(function() {
+                if (i < fullText.length) {
+                    myText.textContent += fullText.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                }
+            }, 50);
+        }
+
+        function startSyncing() {
+            if (scriptIndex < script.length) {
+                const currentWord = script[scriptIndex];
+                
+                typeWriterEffect(currentWord.text, currentWord.speaker);
+
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+                timeoutId = setTimeout(() => {
+                    scriptIndex++;
+                    startSyncing();
+                }, currentWord.time - (scriptIndex > 0 ? script[scriptIndex - 1].time : 0));
+
+            } else {
+                myText.textContent = "Done";
+            }
+        }
+
+        myText.addEventListener('click', function() {
+            
+            myText.style.display = 'none';
+            
+            let count = 3;
+            countdownNumber.textContent = count;
+            countdownNumber.style.display = 'block';
+            
+            const countdownInterval = setInterval(function() {
+                count--;
+                if (count > 0) {
+                    countdownNumber.textContent = count;
+                    
+                    if (count === 2) {
+                        document.body.classList.remove('male-style');
+                        document.body.classList.add('female-style');
+                    } else if (count === 1) {
+                        document.body.classList.remove('female-style');
+                        document.body.classList.add('male-style');
+                    }
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownNumber.style.display = 'none';
+                    myText.style.display = 'block';
+                    audio.play();
+                    
+                    
+                    setTimeout(() => {
+                        myText.textContent = '';
+                        scriptIndex = 0;
+                        startSyncing();
+                    }, 100);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
